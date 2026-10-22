@@ -27,3 +27,10 @@ jobs:
       - name: Invalidate CloudFront Cache
         run: |
           aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+      - name: Auto-inject cache buster into HTML
+        run: |
+          # Generates a short timestamp or commit SHA
+          BUILD_ID=$(git rev-parse --short HEAD)
+          
+          # Automatically replaces 'profile.png' in your HTML with a dynamic version
+          sed -i "s/profile.png/profile.png?v=$BUILD_ID/g" index.html
